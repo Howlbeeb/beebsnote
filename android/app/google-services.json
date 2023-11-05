@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "84130873303",
+    "project_id": "beebsnotes",
+    "storage_bucket": "beebsnotes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:84130873303:android:a4064969449fe5db005592",
+        "android_client_info": {
+          "package_name": "com.example.beebnotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBF61i8HSIvgD-0D_BKA1sLCbAMieJ_n8o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
