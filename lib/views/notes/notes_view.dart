@@ -1,4 +1,5 @@
 import 'package:beebnotes/constants/routes.dart';
+import 'package:beebnotes/constants/styles.dart';
 import 'package:beebnotes/services/auth/auth_service.dart';
 import 'package:beebnotes/services/auth/crud/notes_service.dart';
 import 'package:beebnotes/utilities/dialogs/logout_dialog.dart';
@@ -25,75 +26,95 @@ class _NotesViewState extends State<NotesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Beeb\'s Notes'),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed(
-                    createOrUpdateNotesRoute,
-                  );
-                },
-                icon: const Icon(Icons.add)),
-            PopupMenuButton<MenuAction>(
-              itemBuilder: (context) {
-                return const [
-                  PopupMenuItem<MenuAction>(
-                    value: MenuAction.logout,
-                    child: Text('Log out'),
-                  ),
-                ];
-              },
-              onSelected: (value) async {
-                switch (value) {
-                  case MenuAction.logout:
-                    final shouldLogout = await showLogOutDialog(context);
-                    if (shouldLogout) {
-                      await AuthService.firebase().logout();
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil(loginRoute, (_) => false);
-                    }
-                }
-              },
-            )
-          ],
+      appBar: AppBar(
+        title: const Text(
+          'My Notes',
+          style: kMidTextStyle,
         ),
-        body: FutureBuilder(
-          future: _notesService.getOrCreateUser(email: userEmail),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                return StreamBuilder(
-                    stream: _notesService.allNotes,
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                        case ConnectionState.active:
-                          if (snapshot.hasData) {
-                            final allNotes =
-                                snapshot.data as List<DatabaseNote>;
-                            return NotesListView(
-                              notes: allNotes,
-                              onDeleteNote: (note) async {
-                                await _notesService.deleteNote(id: note.id);
-                              },
-                              onTap: (note) {
-                                Navigator.of(context).pushNamed(
-                                    createOrUpdateNotesRoute,
-                                    arguments: note);
-                              },
-                            );
-                          } else {
-                            return const CircularProgressIndicator();
-                          }
-                        default:
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.search,
+              size: 24,
+            ),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.grid_view,
+            ),
+          ),
+          PopupMenuButton<MenuAction>(
+            itemBuilder: (context) {
+              return const [
+                PopupMenuItem<MenuAction>(
+                  value: MenuAction.logout,
+                  child: Text('Log out'),
+                ),
+              ];
+            },
+            onSelected: (value) async {
+              switch (value) {
+                case MenuAction.logout:
+                  final shouldLogout = await showLogOutDialog(context);
+                  if (shouldLogout) {
+                    await AuthService.firebase().logout();
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil(loginRoute, (_) => false);
+                  }
+              }
+            },
+          )
+        ],
+      ),
+      body: FutureBuilder(
+        future: _notesService.getOrCreateUser(email: userEmail),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              return StreamBuilder(
+                  stream: _notesService.allNotes,
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                      case ConnectionState.active:
+                        if (snapshot.hasData) {
+                          final allNotes = snapshot.data as List<DatabaseNote>;
+                          return NotesListView(
+                            notes: allNotes,
+                            onDeleteNote: (note) async {
+                              await _notesService.deleteNote(id: note.id);
+                            },
+                            onTap: (note) {
+                              Navigator.of(context).pushNamed(
+                                  createOrUpdateNotesRoute,
+                                  arguments: note);
+                            },
+                          );
+                        } else {
                           return const CircularProgressIndicator();
-                      }
-                    });
-              default:
-                return const CircularProgressIndicator();
-            }
-          },
-        ));
+                        }
+                      default:
+                        return const CircularProgressIndicator();
+                    }
+                  });
+            default:
+              return const CircularProgressIndicator();
+          }
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed(
+            createOrUpdateNotesRoute,
+          );
+        },
+        child: const Icon(
+          Icons.add,
+          size: 24,
+        ),
+      ),
+    );
   }
 }
