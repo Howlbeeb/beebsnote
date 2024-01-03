@@ -20,3 +20,4 @@ const kMidTextStyle = TextStyle(
   fontWeight: FontWeight.w500,
   height: 0,
 );
+Color selectedColor = Colors.grey;

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:beebnotes/services/cloud/cloud_note.dart';
 import 'package:beebnotes/services/cloud/firebase_cloud_storage.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flex_color_picker/flex_color_picker.dart';
 
 class CreateUpdateNoteView extends StatefulWidget {
   const CreateUpdateNoteView({Key? key}) : super(key: key);
@@ -101,62 +102,80 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: () async {
-              final text = _textController.text;
-              if (_note == null || text.isEmpty) {
-                await showCannotShareEmptyNoteDialog(context);
-              } else {
-                Share.share(text);
-              }
-            },
-            icon: const Icon(Icons.share),
-          )
-        ],
-      ),
-      body: FutureBuilder(
-        future: createOrGetExistingNote(context),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              _setupTextControllerListener();
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(children: [
-                  TextField(
-                    controller: _titleController,
-                    maxLines: 1,
-                    style: kBigTextStyle.copyWith(
-                        fontWeight: FontWeight.w400, fontSize: 20),
-                    decoration: const InputDecoration(
-                      hintText: 'Title..',
-                      border: InputBorder.none,
+        backgroundColor: selectedColor,
+        appBar: AppBar(
+          actions: [
+            IconButton(
+              onPressed: () async {
+                final text = _textController.text;
+                if (_note == null || text.isEmpty) {
+                  await showCannotShareEmptyNoteDialog(context);
+                } else {
+                  Share.share(text);
+                }
+              },
+              icon: const Icon(Icons.share),
+            )
+          ],
+        ),
+        body: FutureBuilder(
+          future: createOrGetExistingNote(context),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.done:
+                _setupTextControllerListener();
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(children: [
+                    TextField(
+                      controller: _titleController,
+                      maxLines: 1,
+                      style: kBigTextStyle.copyWith(
+                          fontWeight: FontWeight.w400, fontSize: 20),
+                      decoration: const InputDecoration(
+                        hintText: 'Title..',
+                        border: InputBorder.none,
+                      ),
                     ),
-                  ),
-                  const Divider(
-                    height: 2,
-                    thickness: 1,
-                  ),
-                  TextField(
-                    controller: _textController,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    style: kSmallTextStyle.copyWith(
-                        fontWeight: FontWeight.w300, fontSize: 18),
-                    decoration: const InputDecoration(
-                      hintText: 'Start typing your note...',
-                      border: InputBorder.none,
+                    const Divider(
+                      height: 2,
+                      thickness: 1,
                     ),
-                  ),
-                ]),
-              );
-            default:
-              return const CircularProgressIndicator();
-          }
-        },
-      ),
-    );
+                    TextField(
+                      controller: _textController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      style: kSmallTextStyle.copyWith(
+                          fontWeight: FontWeight.w300, fontSize: 18),
+                      decoration: const InputDecoration(
+                        hintText: 'Start typing your note...',
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ]),
+                );
+              default:
+                return const CircularProgressIndicator();
+            }
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            ColorPicker(
+              color: selectedColor,
+              onColorChanged: (Color color) {
+                setState(() {
+                  selectedColor = color;
+                });
+              },
+            ).showPickerDialog(
+              context,
+            );
+          },
+          child: const Icon(
+            Icons.format_color_fill,
+            size: 24,
+          ),
+        ));
   }
 }

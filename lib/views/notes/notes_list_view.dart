@@ -27,7 +27,7 @@ class NotesListView extends StatelessWidget {
           final note = notes.elementAt(index);
           return Dismissible(
             key: Key(note.documentId),
-            onDismissed: (direction) async {
+            confirmDismiss: (direction) async {
               final shouldDelete = await showDeleteDialog(context);
               if (shouldDelete) {
                 onDeleteNote(note);

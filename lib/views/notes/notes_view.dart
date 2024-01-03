@@ -47,7 +47,9 @@ class _NotesViewState extends State<NotesView> {
           if (_isGridMode)
             IconButton(
               onPressed: () {
-                _isGridMode = false;
+                setState(() {
+                  _isGridMode = false;
+                });
               },
               icon: const Icon(
                 Icons.grid_view,
@@ -56,7 +58,9 @@ class _NotesViewState extends State<NotesView> {
           else
             IconButton(
               onPressed: () {
-                _isGridMode = true;
+                setState(() {
+                  _isGridMode = true;
+                });
               },
               icon: const Icon(
                 Icons.list,
@@ -94,7 +98,7 @@ class _NotesViewState extends State<NotesView> {
                 if (snapshot.hasData) {
                   final allNotes = snapshot.data as Iterable<CloudNote>;
                   return _isGridMode
-                      ? NotesGridView(
+                      ? NotesListView(
                           notes: allNotes,
                           onDeleteNote: (note) async {
                             await _notesService.deleteNote(
@@ -106,7 +110,7 @@ class _NotesViewState extends State<NotesView> {
                                 arguments: note);
                           },
                         )
-                      : NotesListView(
+                      : NotesGridView(
                           notes: allNotes,
                           onDeleteNote: (note) async {
                             await _notesService.deleteNote(

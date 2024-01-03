@@ -43,7 +43,7 @@ class NotesGridView extends StatelessWidget {
               height: 111,
               clipBehavior: Clip.antiAlias,
               decoration: ShapeDecoration(
-                color: Color(0xC1FAFF32),
+                color: selectedColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
