@@ -33,7 +33,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
               await AuthService.firebase().logout();
               // ignore: use_build_context_synchronously
               Navigator.of(context)
-                  .pushNamedAndRemoveUntil(registerRoute, (route) => false);
+                  .pushNamedAndRemoveUntil(loginRoute, (route) => false);
             },
             child: const Text('Restart'),
           )

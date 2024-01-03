@@ -8,6 +8,8 @@ import 'package:beebnotes/views/notes/notes_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:beebnotes/enums/menu_action.dart';
 
+import 'notes_grid_view.dart';
+
 class NotesView extends StatefulWidget {
   const NotesView({Key? key}) : super(key: key);
 
@@ -18,6 +20,7 @@ class NotesView extends StatefulWidget {
 class _NotesViewState extends State<NotesView> {
   String get userId => AuthService.firebase().currentUser!.id;
   late final FirebaseCloudStorage _notesService;
+  bool _isGridMode = false;
   @override
   void initState() {
     _notesService = FirebaseCloudStorage();
@@ -27,6 +30,7 @@ class _NotesViewState extends State<NotesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF4F4F4),
       appBar: AppBar(
         title: const Text(
           'My Notes',
@@ -40,12 +44,24 @@ class _NotesViewState extends State<NotesView> {
               size: 24,
             ),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.grid_view,
+          if (_isGridMode)
+            IconButton(
+              onPressed: () {
+                _isGridMode = false;
+              },
+              icon: const Icon(
+                Icons.grid_view,
+              ),
+            )
+          else
+            IconButton(
+              onPressed: () {
+                _isGridMode = true;
+              },
+              icon: const Icon(
+                Icons.list,
+              ),
             ),
-          ),
           PopupMenuButton<MenuAction>(
             itemBuilder: (context) {
               return const [
@@ -77,17 +93,31 @@ class _NotesViewState extends State<NotesView> {
               case ConnectionState.active:
                 if (snapshot.hasData) {
                   final allNotes = snapshot.data as Iterable<CloudNote>;
-                  return NotesListView(
-                    notes: allNotes,
-                    onDeleteNote: (note) async {
-                      await _notesService.deleteNote(
-                          documentId: note.documentId);
-                    },
-                    onTap: (note) {
-                      Navigator.of(context)
-                          .pushNamed(createOrUpdateNotesRoute, arguments: note);
-                    },
-                  );
+                  return _isGridMode
+                      ? NotesGridView(
+                          notes: allNotes,
+                          onDeleteNote: (note) async {
+                            await _notesService.deleteNote(
+                                documentId: note.documentId);
+                          },
+                          onTap: (note) {
+                            Navigator.of(context).pushNamed(
+                                createOrUpdateNotesRoute,
+                                arguments: note);
+                          },
+                        )
+                      : NotesListView(
+                          notes: allNotes,
+                          onDeleteNote: (note) async {
+                            await _notesService.deleteNote(
+                                documentId: note.documentId);
+                          },
+                          onTap: (note) {
+                            Navigator.of(context).pushNamed(
+                                createOrUpdateNotesRoute,
+                                arguments: note);
+                          },
+                        );
                 } else {
                   return const CircularProgressIndicator();
                 }
